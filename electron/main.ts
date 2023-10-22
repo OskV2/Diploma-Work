@@ -25,7 +25,8 @@ function createWindow(w: number, h: number, fs: boolean): BrowserWindow {
 		show: false,
 		webPreferences: {
 			nodeIntegration: true,
-		}
+			contextIsolation: false,
+		  }
 	});
 
 	// How you load the react app depends on if you have a package or not.
