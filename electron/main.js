@@ -1,9 +1,9 @@
 import { app, BrowserWindow } from "electron";
 
-var mainWindow: BrowserWindow | null = null;
+var mainWindow = null;
 
 app.on("ready", () => {
-	mainWindow = createWindow(1280, 720, false);
+	mainWindow = createWindow(1024, 768, false);
 
 	// Check if the application is packaged.
 	if (!app.isPackaged) {
@@ -15,10 +15,12 @@ app.on("ready", () => {
 	}
 });
 
-function createWindow(w: number, h: number, fs: boolean): BrowserWindow {
+function createWindow(w, h, fs) {
 	let mw = new BrowserWindow({
 		width: w,
+		minWidth: w,
 		height: h,
+		minHeight: h,
 		fullscreen: fs,
 		frame: true,
 		backgroundColor: "#000000",
@@ -38,9 +40,6 @@ function createWindow(w: number, h: number, fs: boolean): BrowserWindow {
 
 	mw.once("ready-to-show", () => {
 		mw.show();
-
-		// Example ipcRenderer/ipcMain use. 
-		mw.webContents.send("test:bar", "bar");
 	});
 
 	return mw;
