@@ -1,33 +1,18 @@
 {
-	"compilerOptions": {
-		"target": "esnext",
-		"module": "esnext",
-		"moduleResolution": "node",
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"esnext"
-		],
-		"alwaysStrict": true,
-		"removeComments": true,
-		"strict": true,
-		"strictNullChecks": true,
-		"allowJs": true,
-		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": true,
-		"jsx": "react"
-	},
-	"include": [
-		"src"
-	],
-	"exclude": [
-		"node_modules",
-		"build",
-		"dist"
-	]
+  "compilerOptions": {
+    "incremental": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "lib": ["dom", "es2022"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "outDir": ".erb/dll"
+  },
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
