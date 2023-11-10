@@ -1,27 +1,24 @@
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import icon from '../../assets/icon.svg';
 import './App.css';
 
-import Input from './components/Input/Input';
-
-import RootPage from "./pages/RootPage";
-import HomePage from "./pages/HomePage";
+import Root from "./pages/Root";
+import Home from "./pages/Home";
 import UseId from "./pages/UseId";
 import GetId from "./pages/GetId";
-import DisposablePage from "./pages/DisposablePage";
+import Disposable from "./pages/Disposable";
 import About from "./pages/About";
 
 const router = createHashRouter([
   {
     path: "/",
-    element: <RootPage />,
+    element: <Root />,
     children: [
-      { index: true, element: <HomePage /> },
+      { index: true, element: <Home /> },
       { path: "use_id", element: <UseId />, children: [
-
+        // add children for using ID
       ]},
       { path: "get_id", element: <GetId /> },
-      { path: "disposable", element: <DisposablePage /> },
+      { path: "disposable", element: <Disposable /> },
       { path: "about", element: <About /> }
     ],
   },

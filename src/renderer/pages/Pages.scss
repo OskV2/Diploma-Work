@@ -1,3 +1,5 @@
+$green: #09d3ac;
+
 .home {
     width: 100%;
     
@@ -9,7 +11,7 @@
 
 
     &__link {
-        color: #09d3ac;
+        color: $green;
         background-color: white;
         text-decoration: none;
         padding: 20px 0px;
@@ -20,9 +22,11 @@
         font-weight: 700;
         text-transform: uppercase;
 
+        transition: background-color 0.3s, box-shadow 0.3s, border 0.3s;
+
         &:hover {
-            background-color: #f2f2f2;
-            box-shadow: 5px 10px 20px 0px rgba(9, 211, 172, 1);
+            background-color: #3a3a3a;
+            box-shadow: 2px 2px 20px 0px $green;
         }
     }
 }
