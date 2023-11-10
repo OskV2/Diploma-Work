@@ -11,7 +11,7 @@ import cloudIcon from '../../img/upload.svg'
 import errorIcon from '../../img/error.svg'
 import okIcon from '../../img/ok.svg'
 
-const Input = () => {
+const Input = ({ setSelectedFile }) => {
   const [chosenFile, setChosenFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState(null);
@@ -92,6 +92,16 @@ const Input = () => {
       )
     }
   }
+
+  const handleDrawChart = () => {
+    if (chosenFile && chosenFile.name.endsWith('.xlsx')) {
+      setSelectedFile(chosenFile); // Set the selected file in the parent component
+    } else {
+      console.log('clicked')
+      setChosenFile(null)
+      setError('File must be .xlsx')
+    }
+  };
   
   return (
     <>
@@ -107,7 +117,9 @@ const Input = () => {
       </label>
       { dragActive && <div className='input__drag' onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div> }
     </form>
-    <Button primary={false} disabled={chosenFile ? false : true}>Draw a chart</Button>
+    <div className="input__controls">
+      <Button primary={false} disabled={chosenFile ? false : true} onClick={handleDrawChart}>Draw a chart</Button>
+    </div>
     </>
   );
 }
