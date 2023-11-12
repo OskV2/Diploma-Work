@@ -11,9 +11,6 @@ ChartJS.register(...registerables);
 const Chart = ({ fileData, fileName }) => {  
   const [range, setRange] = useState({ min: 0, max: fileData.length });  
 
-  console.log('Range: ' + range.max)
-  console.log('filedata: ' + fileData.length)
-
   const handleMinInputChange = (e) => {
     setRange({ ...range, min: e.target.value });
   };
