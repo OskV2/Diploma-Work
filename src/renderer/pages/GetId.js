@@ -41,7 +41,7 @@ const GetId = () => {
     <>
       <Back />
       <div className="get-id">
-        <h1>Write a new ID or generate a new ID</h1>
+        <h1>Write or generate new ID number</h1>
         <div className="get-id__container">
           <input
             className="get-id__input"

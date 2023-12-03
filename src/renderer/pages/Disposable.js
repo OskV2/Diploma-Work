@@ -56,28 +56,30 @@ const DisposablePage = () => {
     }
   }, [selectedFile]);
 
-  try {
-    arrayToConvert = JSON.parse(fileData);
-    
-    transformedData = arrayToConvert.map((item) => {
-      const date = convertExcelDate(item.Date)
-      const time = convertExcelTime(item.Time)
+  if (fileData.length > 1) {
+    try {
+      arrayToConvert = JSON.parse(fileData);
       
-      if ('Ch3' in item) {
-        return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2, Ch3: item.Ch3 };
-      }
-      if ('Ch2' in item) {
-        return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2 };
-      }
-      if ('Ch1' in item) {
-        return { date, time, Ch0: item.Ch0, Ch1: item.Ch1 };
-      }
-      if ('Ch0' in item) {
-        return { date, time, Ch0: item.Ch0 };
-      }
-    });
-  } catch (error) {
-    console.error('Error parsing JSON data:', error);
+      transformedData = arrayToConvert.map((item) => {
+        const date = convertExcelDate(item.Date)
+        const time = convertExcelTime(item.Time)
+        
+        if ('Ch3' in item) {
+          return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2, Ch3: item.Ch3 };
+        }
+        if ('Ch2' in item) {
+          return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2 };
+        }
+        if ('Ch1' in item) {
+          return { date, time, Ch0: item.Ch0, Ch1: item.Ch1 };
+        }
+        if ('Ch0' in item) {
+          return { date, time, Ch0: item.Ch0 };
+        }
+      });
+    } catch (error) {
+      console.error('Error parsing JSON data:', error);
+    }
   }
 
   return (

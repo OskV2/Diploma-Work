@@ -12,7 +12,7 @@ const HomePage = () => {
     <div className='home'>
       <Link className={LinkClasses} to="">I have an ID</Link>
       <Link className={LinkClasses} to="get_id">I need new ID</Link>
-      <Link className={LinkClasses} to="disposable">Disposable</Link>
+      <Link className={LinkClasses} to="disposable">Use chart</Link>
       <Link className={LinkClasses} to="about">About</Link>
     </div>
   );

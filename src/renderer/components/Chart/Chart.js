@@ -29,7 +29,9 @@ const Chart = ({ fileData, fileName }) => {
   );
 
   const filteredLabels = filteredChartData.map((item) => {
-    return item.time
+    if (item.time) {
+      return item.time
+    }
   });
 
   const dataset_0 = {
