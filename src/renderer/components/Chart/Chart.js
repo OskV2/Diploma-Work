@@ -3,13 +3,17 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from "chart.js";
 import RangeSlider from 'react-range-slider-input';
 import 'react-range-slider-input/dist/style.css';
+import annotationPlugin from 'chartjs-plugin-annotation';
 
 import './Chart.scss'
 
-ChartJS.register(...registerables);
+ChartJS.register(...registerables, annotationPlugin);
 
 const Chart = ({ fileData, fileName }) => {  
-  const [range, setRange] = useState({ min: 0, max: fileData.length });  
+  const [range, setRange] = useState({ min: 0, max: fileData.length - 1 });  
+  const [annotationPointId, setAnnotationPointId] = useState(null);
+
+  console.log(fileData)
 
   const handleMinInputChange = (e) => {
     setRange({ ...range, min: e.target.value });
@@ -86,6 +90,19 @@ const Chart = ({ fileData, fileName }) => {
     datasets,
   };
 
+  const handlePointClick = (event, elements) => {
+    if (elements.length > 0) {
+      const clickedPoint = fileData[elements[0].index];
+      setAnnotationPointId(parseInt(clickedPoint.ID) + parseInt(range.min));
+    }
+  };
+
+  const isAnnotationInRange = range.min <= annotationPointId && annotationPointId <= range.max; // BOOLEAN
+  const annotationX = isAnnotationInRange ? annotationPointId - range.min : null;
+
+  console.log(`Clicked point ID: ${annotationPointId}`)
+  console.log(`Annotation Value: ${annotationX}`)
+
   const options = {
     responsive: true,
     plugins: {
@@ -95,8 +112,20 @@ const Chart = ({ fileData, fileName }) => {
       title: {
         display: false,
       },
+      annotation: {
+        annotations: {
+          line1: {
+            type: 'line',
+            scaleID: 'x',
+            value: annotationX,
+            borderColor: 'rgb(255, 99, 132)',
+            borderWidth: 2,
+          }
+        }
+      },
     },
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+    onClick: handlePointClick
   };
 
   return (

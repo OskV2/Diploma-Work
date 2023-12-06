@@ -60,21 +60,22 @@ const DisposablePage = () => {
     try {
       arrayToConvert = JSON.parse(fileData);
       
-      transformedData = arrayToConvert.map((item) => {
+      transformedData = arrayToConvert.map((item, index) => {
         const date = convertExcelDate(item.Date)
         const time = convertExcelTime(item.Time)
+        let ID = index
         
         if ('Ch3' in item) {
-          return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2, Ch3: item.Ch3 };
+          return { ID, date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2, Ch3: item.Ch3 };
         }
         if ('Ch2' in item) {
-          return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2 };
+          return { ID, date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2 };
         }
         if ('Ch1' in item) {
-          return { date, time, Ch0: item.Ch0, Ch1: item.Ch1 };
+          return { ID, date, time, Ch0: item.Ch0, Ch1: item.Ch1 };
         }
         if ('Ch0' in item) {
-          return { date, time, Ch0: item.Ch0 };
+          return { ID, date, time, Ch0: item.Ch0 };
         }
       });
     } catch (error) {
