@@ -10,8 +10,8 @@ import './Chart.scss'
 ChartJS.register(...registerables, annotationPlugin);
 
 const Chart = ({ fileData, fileName }) => {  
-  const [range, setRange] = useState({ min: 0, max: fileData.length - 1 });  
-  const [annotationPointId, setAnnotationPointId] = useState(null);
+  const [range, setRange] = useState({ min: 0, max: fileData.length });  
+  const [annotationPointIds, setAnnotationPointIds] = useState([]);
 
   console.log(fileData)
 
@@ -93,15 +93,35 @@ const Chart = ({ fileData, fileName }) => {
   const handlePointClick = (event, elements) => {
     if (elements.length > 0) {
       const clickedPoint = fileData[elements[0].index];
-      setAnnotationPointId(parseInt(clickedPoint.ID) + parseInt(range.min));
+      const clickedPointId = parseInt(clickedPoint.ID) + parseInt(range.min);
+
+      const hasAnnotation = annotationPointIds.includes(clickedPointId);
+
+      setAnnotationPointIds((prevIds) => {
+        if (hasAnnotation) {
+          return prevIds.filter((id) => id !== clickedPointId); // Remove the annotation if it already exists
+        } else {
+          return [...prevIds, clickedPointId]; // Add the annotation if it doesn't exist
+        }
+      });
     }
   };
 
-  const isAnnotationInRange = range.min <= annotationPointId && annotationPointId <= range.max; // BOOLEAN
-  const annotationX = isAnnotationInRange ? annotationPointId - range.min : null;
+  const isAnnotationInRange = (id) => range.min <= id && id <= range.max;
 
-  console.log(`Clicked point ID: ${annotationPointId}`)
-  console.log(`Annotation Value: ${annotationX}`)
+  const annotations = annotationPointIds
+  .filter(isAnnotationInRange)
+  .map((id, index) => ({
+    type: 'line',
+    scaleID: 'x',
+    value: id - range.min,
+    borderColor: 'rgb(255, 99, 132)',
+    borderWidth: 2,
+    label: {
+      display: true,
+      content: `M${index + 1}`
+    }
+  }));
 
   const options = {
     responsive: true,
@@ -114,18 +134,15 @@ const Chart = ({ fileData, fileName }) => {
       },
       annotation: {
         annotations: {
-          line1: {
-            type: 'line',
-            scaleID: 'x',
-            value: annotationX,
-            borderColor: 'rgb(255, 99, 132)',
-            borderWidth: 2,
-          }
+          ...annotations.reduce((obj, _, index) => ({
+            ...obj,
+            [`line${index + 1}`]: annotations[index],
+          }), {}),
         }
       },
     },
     maintainAspectRatio: false,
-    onClick: handlePointClick
+    onClick: handlePointClick,
   };
 
   return (
