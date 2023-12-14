@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from "chart.js";
 import RangeSlider from 'react-range-slider-input';
@@ -12,6 +12,7 @@ ChartJS.register(...registerables, annotationPlugin);
 const Chart = ({ fileData, fileName }) => {  
   const [range, setRange] = useState({ min: 0, max: fileData.length });  
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
+  const chartRef = useRef(null);
 
   console.log(fileData)
 
@@ -145,12 +146,37 @@ const Chart = ({ fileData, fileName }) => {
     onClick: handlePointClick,
   };
 
+  const handleExport = () => {
+    const base64Image = chartRef.current.toBase64Image('image/png', 1);
+    // console.log(base64Image); // You can replace this with your logic to save or display the image
+    
+    if (base64Image) {
+      // Create an anchor element
+      const anchor = document.createElement('a');
+  
+      // Set the href attribute with the base64 image data
+      anchor.href = base64Image;
+  
+      // Set the download attribute with the desired file name
+      anchor.download = 'chart_image.png';
+  
+      // Append the anchor element to the document
+      document.body.appendChild(anchor);
+  
+      // Simulate a click on the anchor element
+      anchor.click();
+  
+      // Remove the anchor element from the document
+      document.body.removeChild(anchor);
+    }
+  };
+
   return (
     <div className='chart'>
       <h1 className='chart__title'>Selected File: {fileName}</h1>
       {fileData[1] && <p className='chart__date'>Date of research: {fileData[1].date.toLocaleDateString()}</p>}
       <div className='chart__container'>
-        <Line data={data} options={options} width={1000} height={500}/>
+        <Line data={data} options={options} width={1000} height={500} ref={chartRef}/>
       </div>
       <div className="chart__controls">
         <input
@@ -169,6 +195,7 @@ const Chart = ({ fileData, fileName }) => {
         />
       </div>
       <RangeSlider min={0} max={fileData.length} value={[range.min, range.max]} onInput={handleRangeChange} />
+      <button onClick={handleExport}>Export Chart</button>
     </div>
   );
 };
