@@ -4,6 +4,9 @@ import { Chart as ChartJS, registerables } from "chart.js";
 import RangeSlider from 'react-range-slider-input';
 import 'react-range-slider-input/dist/style.css';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import Switch from '../Switch/Switch';
+import Button from '../Button/Button';
+import ExportIcon from '../../img/file-export.svg'
 
 import './Chart.scss'
 
@@ -11,6 +14,9 @@ ChartJS.register(...registerables, annotationPlugin);
 
 const Chart = ({ fileData, fileName }) => {  
   const [range, setRange] = useState({ min: 0, max: fileData.length });  
+  const [settings, setSettings] = useState({
+    temperature: true, // true = Celcius, false = Kelvin
+  })
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
   const chartRef = useRef(null);
 
@@ -171,8 +177,39 @@ const Chart = ({ fileData, fileName }) => {
     }
   };
 
+  const settingsContent = (
+    <div className='chart__settings'>
+      <div className="temperature">
+        <span className='temperature__text'>Ustawienie temperatury</span>
+        <Switch 
+          isOn={settings.temperature}
+          handleToggle={() => setSettings({ temperature: !settings.temperature })}
+          textOneWhite="°C"
+          textOneBlack="°C"
+          textTwoWhite="K"
+          textTwoBlack="K"
+        />
+      </div>
+      
+      <Button 
+        primary={true}
+        onClick={handleExport}
+        className='export'
+      >
+        <span>Export</span>
+        <img src={ExportIcon} alt="Download icon" />
+      </Button>
+      
+      
+    </div>
+  )
+
+    console.log(settings.temperature)
+    //0 °C = 273,15 K
+
   return (
     <div className='chart'>
+      {settingsContent}
       <h1 className='chart__title'>Selected File: {fileName}</h1>
       {fileData[1] && <p className='chart__date'>Date of research: {fileData[1].date.toLocaleDateString()}</p>}
       <div className='chart__container'>
@@ -185,6 +222,7 @@ const Chart = ({ fileData, fileName }) => {
           placeholder="min"
           value={range.min}
           onChange={handleMinInputChange}
+          min="0"
         />
         <input
           className='chart__input'
@@ -192,10 +230,10 @@ const Chart = ({ fileData, fileName }) => {
           placeholder="max"
           value={range.max}
           onChange={handleMaxInputChange}
+          max={fileData.length}
         />
       </div>
       <RangeSlider min={0} max={fileData.length} value={[range.min, range.max]} onInput={handleRangeChange} />
-      <button onClick={handleExport}>Export Chart</button>
     </div>
   );
 };
