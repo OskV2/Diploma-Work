@@ -20,8 +20,6 @@ const Chart = ({ fileData, fileName }) => {
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
   const chartRef = useRef(null);
 
-  console.log(fileData)
-
   const handleMinInputChange = (e) => {
     setRange({ ...range, min: e.target.value });
   };
@@ -117,7 +115,6 @@ const Chart = ({ fileData, fileName }) => {
   const isAnnotationInRange = (id) => range.min <= id && id <= range.max;
 
   const annotations = annotationPointIds
-  .filter(isAnnotationInRange)
   .map((id, index) => ({
     type: 'line',
     scaleID: 'x',
@@ -127,7 +124,8 @@ const Chart = ({ fileData, fileName }) => {
     label: {
       display: true,
       content: `M${index + 1}`
-    }
+    },
+    diaplay: isAnnotationInRange
   }));
 
   const options = {

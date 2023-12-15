@@ -87,7 +87,7 @@ const DisposablePage = () => {
     <>
       <Back />
       {!selectedFile && <Input setSelectedFile={setSelectedFile} />}
-      {selectedFile && <Chart fileData={transformedData} fileName={selectedFile.name} />}
+      {fileData.length > 0 && selectedFile && <Chart fileData={transformedData} fileName={selectedFile.name} />}
     </>
   );
 };
