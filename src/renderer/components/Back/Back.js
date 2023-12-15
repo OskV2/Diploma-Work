@@ -8,7 +8,7 @@ const Pagination = (props) => {
   return (
     <Link className="back__link" to="../">
       <img src={ChevronLeft} alt="Chevron Left" />
-      Back
+      Wróć
     </Link>
   );
 };

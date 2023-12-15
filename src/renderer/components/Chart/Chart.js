@@ -210,8 +210,8 @@ const Chart = ({ fileData, fileName }) => {
   return (
     <div className='chart'>
       {settingsContent}
-      <h1 className='chart__title'>Selected File: {fileName}</h1>
-      {fileData[1] && <p className='chart__date'>Date of research: {fileData[1].date.toLocaleDateString()}</p>}
+      <h1 className='chart__title'>Wybrany plik: {fileName}</h1>
+      {fileData[1] && <p className='chart__date'>Data badania: {fileData[1].date.toLocaleDateString()}</p>}
       <div className='chart__container'>
         <Line data={data} options={options} width={1000} height={500} ref={chartRef}/>
       </div>

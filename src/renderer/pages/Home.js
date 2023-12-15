@@ -10,10 +10,10 @@ const HomePage = () => {
 
   return (
     <div className='home'>
-      <Link className={LinkClasses} to="">I have an ID</Link>
-      <Link className={LinkClasses} to="get_id">I need new ID</Link>
-      <Link className={LinkClasses} to="disposable">Use chart</Link>
-      <Link className={LinkClasses} to="about">About</Link>
+      {/* <Link className={LinkClasses} to="">I have an ID</Link> */}
+      {/* <Link className={LinkClasses} to="get_id">I need new ID</Link> */}
+      <Link className={LinkClasses} to="disposable">Użyj wykresu</Link>
+      <Link className={LinkClasses} to="about">O aplikacji</Link>
     </div>
   );
 };
