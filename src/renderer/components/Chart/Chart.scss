@@ -52,7 +52,7 @@ $green: rgb(9, 211, 172);
         align-items: flex-end;
         gap: 10px;
 
-        .temperature {
+        .temperature, .time {
             display: flex;
             align-items: center;
             gap: 10px;

@@ -9,10 +9,10 @@ const Switch = (props) => {
         checked={props.isOn}
         onChange={props.handleToggle}
         className="switch__checkbox"
-        id="switch"
+        id={`switch_${props.id}`}
         type="checkbox"
       />
-      <label className="switch__label" htmlFor={`switch`}>
+      <label className="switch__label" htmlFor={`switch_${props.id}`}>
         <p
           className={
             'switch__label__text ' +

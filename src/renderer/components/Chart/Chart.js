@@ -15,11 +15,15 @@ ChartJS.register(...registerables, annotationPlugin);
 const Chart = ({ fileData, fileName }) => {  
   const [range, setRange] = useState({ min: 0, max: fileData.length });  
   const [settings, setSettings] = useState({
-    temperature: true, // true = Celcius, false = Kelvin
+    temperature: true,  // true = Celcius, false = Kelvin
+    time: true,         // true = real time, false = seconds
   })
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
+  
   const chartRef = useRef(null);
 
+  console.log(fileData)
+  
   const handleMinInputChange = (e) => {
     setRange({ ...range, min: e.target.value });
   };
@@ -38,14 +42,20 @@ const Chart = ({ fileData, fileName }) => {
   );
 
   const filteredLabels = filteredChartData.map((item) => {
-    if (item.time) {
-      return item.time
+    if (settings.time == true) {
+      if (item.time) {
+        return item.time
+      }
+    } else {
+      if (item.ID) {
+        return item.ID
+      }
     }
   });
 
   const dataset_0 = {
     label: 'Ch0',
-    data: filteredChartData.map((item) => item.Ch0),
+    data: filteredChartData.map((item) => item.Ch0[ settings.temperature ? 0 : 1 ]), // 0 = °C temperature, 1 = K temperature
     borderColor: 'rgb(9, 211, 172)',
     backgroundColor: 'rgba(9, 211, 172, 0.5)',
     borderWidth: 1,
@@ -53,28 +63,30 @@ const Chart = ({ fileData, fileName }) => {
   }
   const dataset_1 = {
     label: 'Ch1',
-    data: filteredChartData.map((item) => item.Ch1),
+    data: filteredChartData.map((item) => (item.Ch1 ? item.Ch1[settings.temperature ? 0 : 1] : null)),
     borderColor: 'rgb(255, 99, 132)',
     backgroundColor: 'rgba(255, 99, 132, 0.5)',
     borderWidth: 1,
     pointRadius: 2,
-  }
+  };
+  
   const dataset_2 = {
     label: 'Ch2',
-    data: filteredChartData.map((item) => item.Ch2),
+    data: filteredChartData.map((item) => (item.Ch2 ? item.Ch2[settings.temperature ? 0 : 1] : null)),
     borderColor: 'rgb(154, 0, 255)',
     backgroundColor: 'rgba(154, 0, 255, 0.5)',
     borderWidth: 1,
     pointRadius: 2,
-  }
+  };
+  
   const dataset_3 = {
     label: 'Ch3',
-    data: filteredChartData.map((item) => item.Ch3),
+    data: filteredChartData.map((item) => (item.Ch3 ? item.Ch3[settings.temperature ? 0 : 1] : null)),
     borderColor: 'rgb(255, 255, 0)',
     backgroundColor: 'rgba(255, 255, 0, 0.5)',
     borderWidth: 1,
     pointRadius: 2,
-  }
+  };  
 
   const datasets = [ dataset_0 ];
   
@@ -118,7 +130,7 @@ const Chart = ({ fileData, fileName }) => {
   .map((id, index) => ({
     type: 'line',
     scaleID: 'x',
-    value: id - range.min,
+    value: id - 1 - range.min,
     borderColor: 'rgb(255, 99, 132)',
     borderWidth: 2,
     label: {
@@ -146,31 +158,36 @@ const Chart = ({ fileData, fileName }) => {
         }
       },
     },
+    scales: {
+      x: {
+        position: 'bottom',
+        title: {
+          display: true,
+          text: settings.time ? 'Godzina pomiaru w dniu badania' : 'Sekunda badania',
+        },
+      },
+      y: {
+        type: 'linear',
+        position: 'left',
+        title: {
+          display: true,
+          text: `Temperatura w ${settings.temperature ? '°C' : 'K'}`, 
+        },
+      },
+    },
     maintainAspectRatio: false,
     onClick: handlePointClick,
   };
 
   const handleExport = () => {
     const base64Image = chartRef.current.toBase64Image('image/png', 1);
-    // console.log(base64Image); // You can replace this with your logic to save or display the image
     
     if (base64Image) {
-      // Create an anchor element
       const anchor = document.createElement('a');
-  
-      // Set the href attribute with the base64 image data
       anchor.href = base64Image;
-  
-      // Set the download attribute with the desired file name
       anchor.download = 'chart_image.png';
-  
-      // Append the anchor element to the document
       document.body.appendChild(anchor);
-  
-      // Simulate a click on the anchor element
       anchor.click();
-  
-      // Remove the anchor element from the document
       document.body.removeChild(anchor);
     }
   };
@@ -181,14 +198,26 @@ const Chart = ({ fileData, fileName }) => {
         <span className='temperature__text'>Ustawienie temperatury</span>
         <Switch 
           isOn={settings.temperature}
-          handleToggle={() => setSettings({ temperature: !settings.temperature })}
+          handleToggle={() => setSettings(prevSettings => ({ ...prevSettings, temperature: !prevSettings.temperature }))}
+          id="temperature"
           textOneWhite="°C"
           textOneBlack="°C"
           textTwoWhite="K"
           textTwoBlack="K"
         />
       </div>
-      
+      <div className="time">
+        <span className='time__text'>Ustawienie czasu</span>
+        <Switch
+          isOn={settings.time}
+          handleToggle={() => setSettings(prevSettings => ({ ...prevSettings, time: !prevSettings.time }))}
+          id="time"
+          textOneWhite="czas"
+          textOneBlack="czas"
+          textTwoWhite="s"
+          textTwoBlack="s"
+        />
+      </div>
       <Button 
         primary={true}
         onClick={handleExport}
@@ -196,14 +225,9 @@ const Chart = ({ fileData, fileName }) => {
       >
         <span>Export</span>
         <img src={ExportIcon} alt="Download icon" />
-      </Button>
-      
-      
+      </Button>      
     </div>
   )
-
-    console.log(settings.temperature)
-    //0 °C = 273,15 K
 
   return (
     <div className='chart'>
