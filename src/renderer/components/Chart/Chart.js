@@ -19,7 +19,7 @@ const Chart = ({ fileData, fileName }) => {
     time: true,         // true = real time, false = seconds
   })
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
-  
+  const [lastClickedPoint, setLastClickedPoint] = useState(null)
   const chartRef = useRef(null);
 
   console.log(fileData)
@@ -121,8 +121,11 @@ const Chart = ({ fileData, fileName }) => {
           return [...prevIds, clickedPointId]; // Add the annotation if it doesn't exist
         }
       });
+      setLastClickedPoint(clickedPoint)
     }
   };
+
+  console.log(lastClickedPoint)
 
   const isAnnotationInRange = (id) => range.min <= id && id <= range.max;
 
@@ -229,11 +232,25 @@ const Chart = ({ fileData, fileName }) => {
     </div>
   )
 
+  const chartInfo = (
+    <>
+      <h1 className='chart__title'>Wybrany plik: {fileName}</h1>
+      {fileData[1] && <p className='chart__date'>Data badania: {fileData[1].date.toLocaleDateString()}</p>}
+      <p className='chart__date'>
+        Ostatni kliknięty punkt:
+        {lastClickedPoint ? (
+          ` Godzina ${lastClickedPoint.time}, Sekunda badania: ${lastClickedPoint.ID}, Temperatura(Ch0): ${lastClickedPoint.Ch0[0]} °C / ${lastClickedPoint.Ch0[1]} K`
+        ) : (
+          ' Brak klikniętego punktu'
+        )}
+      </p>
+    </>
+  )
+
   return (
     <div className='chart'>
       {settingsContent}
-      <h1 className='chart__title'>Wybrany plik: {fileName}</h1>
-      {fileData[1] && <p className='chart__date'>Data badania: {fileData[1].date.toLocaleDateString()}</p>}
+      {chartInfo}
       <div className='chart__container'>
         <Line data={data} options={options} width={1000} height={500} ref={chartRef}/>
       </div>
