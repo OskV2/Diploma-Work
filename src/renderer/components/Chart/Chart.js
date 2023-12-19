@@ -21,8 +21,6 @@ const Chart = ({ fileData, fileName }) => {
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
   const [lastClickedPoint, setLastClickedPoint] = useState(null)
   const chartRef = useRef(null);
-
-  console.log(fileData)
   
   const handleMinInputChange = (e) => {
     setRange({ ...range, min: e.target.value });
@@ -124,8 +122,6 @@ const Chart = ({ fileData, fileName }) => {
       setLastClickedPoint(clickedPoint)
     }
   };
-
-  console.log(lastClickedPoint)
 
   const isAnnotationInRange = (id) => range.min <= id && id <= range.max;
 
@@ -247,13 +243,8 @@ const Chart = ({ fileData, fileName }) => {
     </>
   )
 
-  return (
-    <div className='chart'>
-      {settingsContent}
-      {chartInfo}
-      <div className='chart__container'>
-        <Line data={data} options={options} width={1000} height={500} ref={chartRef}/>
-      </div>
+  const chartControls = (
+    <>
       <div className="chart__controls">
         <input
           className='chart__input'
@@ -273,6 +264,17 @@ const Chart = ({ fileData, fileName }) => {
         />
       </div>
       <RangeSlider min={0} max={fileData.length} value={[range.min, range.max]} onInput={handleRangeChange} />
+    </>
+  )
+
+  return (
+    <div className='chart'>
+      {settingsContent}
+      {chartInfo}
+      <div className='chart__container'>
+        <Line data={data} options={options} width={1000} height={500} ref={chartRef}/>
+      </div>
+      {chartControls}
     </div>
   );
 };

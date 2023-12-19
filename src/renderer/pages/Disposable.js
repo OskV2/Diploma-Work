@@ -59,7 +59,7 @@ const DisposablePage = () => {
   if (fileData.length > 1) {
     try {
       arrayToConvert = JSON.parse(fileData);
-      
+
       transformedData = arrayToConvert.map((item, index) => {
         const date = convertExcelDate(item.Date)
         const time = convertExcelTime(item.Time)
@@ -77,7 +77,11 @@ const DisposablePage = () => {
         if ('Ch0' in item) {
           return { ID, date, time, Ch0: [item.Ch0, parseInt(item.Ch0) + parseInt(273) ] };
         }
-      });
+        if (!('Ch0' in item)) {
+          return null;
+        }
+      })
+      .filter(Boolean);
     } catch (error) {
       console.error('Error parsing JSON data:', error);
     }
