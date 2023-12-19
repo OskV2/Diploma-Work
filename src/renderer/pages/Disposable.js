@@ -56,35 +56,42 @@ const DisposablePage = () => {
     }
   }, [selectedFile]);
 
-  try {
-    arrayToConvert = JSON.parse(fileData);
-    
-    transformedData = arrayToConvert.map((item) => {
-      const date = convertExcelDate(item.Date)
-      const time = convertExcelTime(item.Time)
-      
-      if ('Ch3' in item) {
-        return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2, Ch3: item.Ch3 };
-      }
-      if ('Ch2' in item) {
-        return { date, time, Ch0: item.Ch0, Ch1: item.Ch1, Ch2: item.Ch2 };
-      }
-      if ('Ch1' in item) {
-        return { date, time, Ch0: item.Ch0, Ch1: item.Ch1 };
-      }
-      if ('Ch0' in item) {
-        return { date, time, Ch0: item.Ch0 };
-      }
-    });
-  } catch (error) {
-    console.error('Error parsing JSON data:', error);
+  if (fileData.length > 1) {
+    try {
+      arrayToConvert = JSON.parse(fileData);
+
+      transformedData = arrayToConvert.map((item, index) => {
+        const date = convertExcelDate(item.Date)
+        const time = convertExcelTime(item.Time)
+        let ID = index + 1
+        
+        if ('Ch3' in item) {
+          return { ID, date, time, Ch0: [item.Ch0, parseInt(item.Ch0) + parseInt(273) ], Ch1: [item.Ch1, parseInt(item.Ch1) + parseInt(273) ], Ch2: [item.Ch2, parseInt(item.Ch2) + parseInt(273) ], Ch3: [item.Ch3, parseInt(item.Ch3) + parseInt(273) ] };
+        }
+        if ('Ch2' in item) {
+          return { ID, date, time, Ch0: [item.Ch0, parseInt(item.Ch0) + parseInt(273) ], Ch1: [item.Ch1, parseInt(item.Ch1) + parseInt(273) ], Ch2: [item.Ch2, parseInt(item.Ch2) + parseInt(273) ] };
+        }
+        if ('Ch1' in item) {
+          return { ID, date, time, Ch0: [item.Ch0, parseInt(item.Ch0) + parseInt(273) ], Ch1: [item.Ch1, parseInt(item.Ch1) + parseInt(273) ] };
+        }
+        if ('Ch0' in item) {
+          return { ID, date, time, Ch0: [item.Ch0, parseInt(item.Ch0) + parseInt(273) ] };
+        }
+        if (!('Ch0' in item)) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+    } catch (error) {
+      console.error('Error parsing JSON data:', error);
+    }
   }
 
   return (
     <>
       <Back />
       {!selectedFile && <Input setSelectedFile={setSelectedFile} />}
-      {selectedFile && <Chart fileData={transformedData} fileName={selectedFile.name} />}
+      {fileData.length > 0 && selectedFile && <Chart fileData={transformedData} fileName={selectedFile.name} />}
     </>
   );
 };

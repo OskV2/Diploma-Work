@@ -76,19 +76,19 @@ const Input = ({ setSelectedFile }) => {
       return (
         <div className='input__header'>
           <img className='input__img' src={okIcon} alt="Ok icon" />
-          <h1 className='input__title input__title--ok'>File selected: {chosenFile.name}</h1>
+          <h1 className='input__title input__title--ok'>Wybrany plik: {chosenFile.name}</h1>
         </div>
       )
     } else if (error) {
       return (
         <div className='input__header'>
           <img className='input__img' src={errorIcon} alt="Error icon" />
-          <h1 className='input__title input__title--error'>Error: {error}</h1>
+          <h1 className='input__title input__title--error'>Wystąpił błąd: {error}</h1>
         </div>
       )
     } else {
       return (
-        <h1 className='input__title'>Upload your file</h1>
+        <h1 className='input__title'>Prześlij plik</h1>
       )
     }
   }
@@ -99,7 +99,7 @@ const Input = ({ setSelectedFile }) => {
     } else {
       console.log('clicked')
       setChosenFile(null)
-      setError('File must be .xlsx')
+      setError('Plik musi być rozszerzenia .xlsx')
     }
   };
   
@@ -111,14 +111,14 @@ const Input = ({ setSelectedFile }) => {
       <label className={dragActive ? "input__label dragging" : "input__label" } id="label-file-upload" htmlFor="input-file-upload">
         <div className='input__content'>
           <img src={cloudIcon} alt="Cloud-icon" height="150"/>
-          <p>Drag and drop your file here or</p>
-          <Button primary={true} onClick={onButtonClick} >Upload a file</Button>
+          <p>Przeciągnij i upuść plik tutaj lub</p>
+          <Button primary={true} onClick={onButtonClick} >Prześlij plik</Button>
         </div> 
       </label>
       { dragActive && <div className='input__drag' onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div> }
     </form>
     <div className="input__controls">
-      <Button primary={false} disabled={chosenFile ? false : true} onClick={handleDrawChart}>Draw a chart</Button>
+      <Button primary={false} disabled={chosenFile ? false : true} onClick={handleDrawChart}>Rysuj wykres</Button>
     </div>
     </>
   );
