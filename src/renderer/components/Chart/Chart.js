@@ -15,13 +15,13 @@ ChartJS.register(...registerables, annotationPlugin);
 const Chart = ({ fileData, fileName }) => {  
   const [range, setRange] = useState({ min: 0, max: fileData.length });  
   const [settings, setSettings] = useState({
-    temperature: true,  // true = Celcius, false = Kelvin
+    temperature: true,  // true = Celsius, false = Kelvin
     time: true,         // true = real time, false = seconds
   })
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
   const [lastClickedPoint, setLastClickedPoint] = useState(null)
   const chartRef = useRef(null);
-  
+
   const handleMinInputChange = (e) => {
     setRange({ ...range, min: e.target.value });
   };

@@ -32,6 +32,7 @@ const Input = ({ setSelectedFile }) => {
   }
   
   // handle drag events
+  //this basically changes styling of form when user drags file into form
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -42,7 +43,7 @@ const Input = ({ setSelectedFile }) => {
     }
   };
   
-  // triggers when file is dropped
+  // triggers when file is dropped but i have no idea what happens when i drop multiple files cause it doesnt throw an error and it also doesnt set any file
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -52,8 +53,10 @@ const Input = ({ setSelectedFile }) => {
       if (droppedFile.name.endsWith('.xlsx')) {
         handleFile([droppedFile]);
       } else {
-        setError('File must be .xlsx')
+        setError('Plik musi być rozszerzenia .xlsx')
       }
+    } else if (e.dataTransfer.files.length > 1) {
+      setError('Możesz przesłać maksymalnie jeden plik')
     }
   };
   
@@ -97,7 +100,6 @@ const Input = ({ setSelectedFile }) => {
     if (chosenFile && chosenFile.name.endsWith('.xlsx')) {
       setSelectedFile(chosenFile); // Set the selected file in the parent component
     } else {
-      console.log('clicked')
       setChosenFile(null)
       setError('Plik musi być rozszerzenia .xlsx')
     }
