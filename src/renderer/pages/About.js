@@ -1,12 +1,11 @@
-import React from 'react';
-
 import Pagination from '../components/Back/Back';
+import Instruction from '../components/Instruction/instruction';
 
 const About = () => {
   return (
     <>
-      <div>About</div>
       <Pagination />
+      <Instruction />
     </>
   );
 };

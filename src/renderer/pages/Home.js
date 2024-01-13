@@ -8,7 +8,7 @@ const HomePage = () => {
 
   return (
     <div className='home'>
-      <Link className={LinkClasses} to="disposable">Użyj wykresu</Link>
+      <Link className={LinkClasses} to="disposable">Użyj wykres</Link>
       <Link className={LinkClasses} to="about">O aplikacji</Link>
     </div>
   );
