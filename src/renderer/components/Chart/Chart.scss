@@ -73,15 +73,15 @@ $green: rgb(9, 211, 172);
         height: 2px;
 
         &__thumb {
-            background: #06876d;
-            border: 1px solid $green;
+            background: #06876d !important; 
+            border: 1px solid $green !important;
 
-            height: 15px;
-            width: 15px;
+            height: 15px !important;
+            width: 15px !important;
         }
 
         &__range {
-            background: $green;
+            background: $green !important;
         }
     }
 }
