@@ -146,7 +146,7 @@ const Chart = ({ fileData, fileName }) => {
     borderWidth: 2,
     label: {
       display: true,
-      content: `M${index + 1}`
+      content: `P${index + 1}`
     },
     diaplay: isAnnotationInRange
   }));
