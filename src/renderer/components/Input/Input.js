@@ -110,7 +110,7 @@ const Input = ({ setSelectedFile }) => {
     {setInputHeader()}
     <form className='input__form' onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
       <input className='input__input' ref={inputRef} type="file" accept=".xlsx" multiple={false} onChange={handleChange} />
-      <label className={dragActive ? "input__label dragging" : "input__label" } id="label-file-upload" htmlFor="input-file-upload">
+      <label className={dragActive ? "input__label dragging" : "input__label" } data-testid="label-file-upload-test" id="label-file-upload" htmlFor="input-file-upload">
         <div className='input__content'>
           <img src={cloudIcon} alt="Cloud-icon" height="150"/>
           <p>Przeciągnij i upuść plik tutaj lub</p>
