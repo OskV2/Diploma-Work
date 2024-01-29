@@ -166,8 +166,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "Charts",
-    "appId": "org.erb.Charts",
+    "productName": "GenerateCharts",
+    "appId": "org.erb.GenerateCharts",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
