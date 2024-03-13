@@ -73,15 +73,58 @@ $green: rgb(9, 211, 172);
         height: 2px;
 
         &__thumb {
-            background: #06876d;
-            border: 1px solid $green;
+            background: #06876d !important; 
+            border: 1px solid $green !important;
 
-            height: 15px;
-            width: 15px;
+            height: 15px !important;
+            width: 15px !important;
         }
 
         &__range {
-            background: $green;
+            background: $green !important;
         }
+    }
+}
+
+.modal__content {
+    display: flex;
+    flex-direction: column;
+
+    &__header {
+        font-size: 20px;
+        margin: 0;
+    }
+
+    &__list {
+        padding: 0px;
+
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+
+    &__list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        border-bottom: 1px solid #252525;
+        &:last-child {
+            border: none;
+        }
+    }
+
+    &__delete {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;   
+    }
+
+    &__close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
     }
 }

@@ -2,25 +2,45 @@ import { useState, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from "chart.js";
 import RangeSlider from 'react-range-slider-input';
-import 'react-range-slider-input/dist/style.css';
 import annotationPlugin from 'chartjs-plugin-annotation';
+
 import Switch from '../Switch/Switch';
 import Button from '../Button/Button';
-import ExportIcon from '../../img/file-export.svg'
+import Modal from '../Modal/Modal';
 
 import './Chart.scss'
+import 'react-range-slider-input/dist/style.css';
+
+import ExportIcon from '../../img/file-export.svg'
+import Close from "../../img/close.svg";
+import Trash from "../../img/trash.svg";
 
 ChartJS.register(...registerables, annotationPlugin);
 
 const Chart = ({ fileData, fileName }) => {  
   const [range, setRange] = useState({ min: 0, max: fileData.length });  
   const [settings, setSettings] = useState({
-    temperature: true,  // true = Celcius, false = Kelvin
+    temperature: true,  // true = Celsius, false = Kelvin
     time: true,         // true = real time, false = seconds
   })
   const [annotationPointIds, setAnnotationPointIds] = useState([]);
   const [lastClickedPoint, setLastClickedPoint] = useState(null)
+  const [modalIsShown, setModalIsShown] = useState(false);
   const chartRef = useRef(null);
+
+  const onClickNode = () => {
+    setModalIsShown(true);
+  };
+
+  const onCloseNode = () => {
+    setModalIsShown(false);
+  };
+
+  const deleteAnnotation = (id) => {
+    setAnnotationPointIds((prevIds) =>
+      prevIds.filter((annotationId) => annotationId !== id)
+    );
+  };
   
   const handleMinInputChange = (e) => {
     setRange({ ...range, min: e.target.value });
@@ -40,15 +60,7 @@ const Chart = ({ fileData, fileName }) => {
   );
 
   const filteredLabels = filteredChartData.map((item) => {
-    if (settings.time == true) {
-      if (item.time) {
-        return item.time
-      }
-    } else {
-      if (item.ID) {
-        return item.ID
-      }
-    }
+    return settings.time ? item.time : item.ID
   });
 
   const dataset_0 = {
@@ -134,7 +146,7 @@ const Chart = ({ fileData, fileName }) => {
     borderWidth: 2,
     label: {
       display: true,
-      content: `M${index + 1}`
+      content: `P${index + 1}`
     },
     diaplay: isAnnotationInRange
   }));
@@ -191,6 +203,34 @@ const Chart = ({ fileData, fileName }) => {
     }
   };
 
+  const modalContent = (
+    <Modal onClose={onCloseNode}>
+      <h2 className='modal__content__header' >Lista adnotacji</h2>
+      <img className="modal__content__close" onClick={onCloseNode} src={Close} alt="Close"/>
+      <ul className='modal__content__list'>
+        {annotationPointIds.map((id) => {
+          const annotationPoint = fileData.find((point) => parseInt(point.ID) + parseInt(range.min) === id);
+
+          return (
+            <li className='modal__content__list-item' key={id}>
+                {annotationPoint && (
+                  <>
+                    <p>Godzina: {annotationPoint.time}, Sekunda: {annotationPoint.ID}, Temperatura(Ch0): {annotationPoint.Ch0[0]} °C / {annotationPoint.Ch0[1]} K </p>
+                    <img className="modal__content__delete" onClick={() => deleteAnnotation(id)} src={Trash} alt="Delete annotation icon"/>
+                  </>
+                )}
+            </li>
+          );
+        })}
+        {annotationPointIds.length === 0 && (
+          <p>
+            Brak adnotacji do wyświetlenia
+          </p>
+        )}
+      </ul>
+    </Modal>
+  )
+
   const settingsContent = (
     <div className='chart__settings'>
       <div className="temperature">
@@ -224,6 +264,9 @@ const Chart = ({ fileData, fileName }) => {
       >
         <span>Export</span>
         <img src={ExportIcon} alt="Download icon" />
+      </Button>
+      <Button onClick={onClickNode}>
+        Lista
       </Button>      
     </div>
   )
@@ -269,6 +312,7 @@ const Chart = ({ fileData, fileName }) => {
 
   return (
     <div className='chart'>
+      {modalIsShown && modalContent}
       {settingsContent}
       {chartInfo}
       <div className='chart__container'>

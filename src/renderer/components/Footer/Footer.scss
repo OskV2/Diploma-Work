@@ -1,0 +1,28 @@
+.footer {    
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+
+    &__link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+
+        span {
+            color: #888;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        img {
+            width: 20px;
+            height: auto;
+        }
+
+        &:hover {
+            span {
+                color: white;
+            }
+        }
+    }
+}

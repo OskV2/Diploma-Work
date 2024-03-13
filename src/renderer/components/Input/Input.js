@@ -32,6 +32,7 @@ const Input = ({ setSelectedFile }) => {
   }
   
   // handle drag events
+  //this basically changes styling of form when user drags file into form
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -42,7 +43,7 @@ const Input = ({ setSelectedFile }) => {
     }
   };
   
-  // triggers when file is dropped
+  // triggers when file is dropped but i have no idea what happens when i drop multiple files cause it doesnt throw an error and it also doesnt set any file
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -52,8 +53,10 @@ const Input = ({ setSelectedFile }) => {
       if (droppedFile.name.endsWith('.xlsx')) {
         handleFile([droppedFile]);
       } else {
-        setError('File must be .xlsx')
+        setError('Plik musi być rozszerzenia .xlsx')
       }
+    } else if (e.dataTransfer.files.length > 1) {
+      setError('Możesz przesłać maksymalnie jeden plik')
     }
   };
   
@@ -97,7 +100,6 @@ const Input = ({ setSelectedFile }) => {
     if (chosenFile && chosenFile.name.endsWith('.xlsx')) {
       setSelectedFile(chosenFile); // Set the selected file in the parent component
     } else {
-      console.log('clicked')
       setChosenFile(null)
       setError('Plik musi być rozszerzenia .xlsx')
     }
@@ -108,7 +110,7 @@ const Input = ({ setSelectedFile }) => {
     {setInputHeader()}
     <form className='input__form' onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
       <input className='input__input' ref={inputRef} type="file" accept=".xlsx" multiple={false} onChange={handleChange} />
-      <label className={dragActive ? "input__label dragging" : "input__label" } id="label-file-upload" htmlFor="input-file-upload">
+      <label className={dragActive ? "input__label dragging" : "input__label" } data-testid="label-file-upload-test" id="label-file-upload" htmlFor="input-file-upload">
         <div className='input__content'>
           <img src={cloudIcon} alt="Cloud-icon" height="150"/>
           <p>Przeciągnij i upuść plik tutaj lub</p>
