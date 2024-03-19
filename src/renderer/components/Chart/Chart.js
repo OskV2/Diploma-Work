@@ -1,105 +1,129 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from "chart.js";
+import { Chart as ChartJS, registerables } from 'chart.js';
 import RangeSlider from 'react-range-slider-input';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { chartActions } from '../../store/chart';
 
 import Switch from '../Switch/Switch';
 import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
 
-import './Chart.scss'
+import './Chart.scss';
 import 'react-range-slider-input/dist/style.css';
 
-import ExportIcon from '../../img/file-export.svg'
-import Close from "../../img/close.svg";
-import Trash from "../../img/trash.svg";
+import ExportIcon from '../../img/file-export.svg';
+import Close from '../../img/close.svg';
+import Trash from '../../img/trash.svg';
 
 ChartJS.register(...registerables, annotationPlugin);
 
-const Chart = ({ fileData, fileName }) => {  
-  const [range, setRange] = useState({ min: 0, max: fileData.length });  
-  const [settings, setSettings] = useState({
-    temperature: true,  // true = Celsius, false = Kelvin
-    time: true,         // true = real time, false = seconds
-  })
-  const [annotationPointIds, setAnnotationPointIds] = useState([]);
-  const [lastClickedPoint, setLastClickedPoint] = useState(null)
-  const [modalIsShown, setModalIsShown] = useState(false);
+const Chart = () => {
+  const dispatch = useDispatch();
+
+  const file = useSelector((state) => state.input.file);
+  const fileData = useSelector((state) => state.input.fileData);
+  const rangeMin = useSelector((state) => state.chart.range.min);
+  const rangeMax = useSelector((state) => state.chart.range.max);
+  const temperature = useSelector((state) => state.chart.temperature);
+  const time = useSelector((state) => state.chart.time);
+  const annotationPoints = useSelector((state) => state.chart.annotationPoints);
+  const lastClickedPoint = useSelector((state) => state.chart.lastClickedPoint);
+  const modalIsShown = useSelector((state) => state.chart.modalIsShown);
   const chartRef = useRef(null);
 
-  const onClickNode = () => {
-    setModalIsShown(true);
-  };
+  /* ----------------------------
+  *
+  *   FUNCTIONS
+  *
+  ----------------------------- */
 
-  const onCloseNode = () => {
-    setModalIsShown(false);
-  };
+  const openModal = () => dispatch(chartActions.openModal());
 
-  const deleteAnnotation = (id) => {
-    setAnnotationPointIds((prevIds) =>
-      prevIds.filter((annotationId) => annotationId !== id)
-    );
-  };
+  const closeModal = () => dispatch(chartActions.closeModal());
+
+  const handleMinInputChange = (e) => dispatch(chartActions.setMinRange(e.target.value));
+
+  const handleMaxInputChange = (e) => dispatch(chartActions.setMaxRange(e.target.value));
+
+  const handleRangeChange = (newRange) => dispatch(chartActions.setRange({ min: newRange[0], max: newRange[1] }));
+
+  const handlePointClick = (event, elements) => {
+    if (elements && elements.length > 0) {
+      const clickedPoint = fileData[elements[0].index];
+      dispatch(chartActions.setLastClickedPoint(clickedPoint));
+    
+      const clickedPointId = parseInt(clickedPoint.ID) + parseInt(rangeMin);
+      const hasAnnotation = annotationPoints.includes(clickedPointId);
   
-  const handleMinInputChange = (e) => {
-    setRange({ ...range, min: e.target.value });
+      if (!hasAnnotation) {
+        dispatch(chartActions.addAnnotation(clickedPointId));
+      } else {
+        dispatch(chartActions.deleteAnnotation(clickedPointId));
+      }
+    }
   };
 
-  const handleMaxInputChange = (e) => {
-    setRange({ ...range, max: e.target.value });
-  };
-
-  const handleRangeChange = (newRange) => {
-    setRange({ min: newRange[0] , max: newRange[1] });
-  };
+  /* ----------------------------
+  *
+  *   END OF FUNCTIONS
+  *
+  ------------------------------*/
 
   const filteredChartData = fileData.slice(
-    range.min ? parseInt(range.min, 10) : 0,
-    range.max ? parseInt(range.max, 10) : fileData.length
+    rangeMin ? parseInt(rangeMin, 10) : 0,
+    rangeMax ? parseInt(rangeMax, 10) : fileData.length,
   );
 
   const filteredLabels = filteredChartData.map((item) => {
-    return settings.time ? item.time : item.ID
+    return time ? item.time : item.ID;
   });
 
   const dataset_0 = {
     label: 'Ch0',
-    data: filteredChartData.map((item) => item.Ch0[ settings.temperature ? 0 : 1 ]), // 0 = °C temperature, 1 = K temperature
+    data: filteredChartData.map((item) => item.Ch0[temperature ? 0 : 1]), // 0 = °C temperature, 1 = K temperature
     borderColor: 'rgb(9, 211, 172)',
     backgroundColor: 'rgba(9, 211, 172, 0.5)',
     borderWidth: 1,
     pointRadius: 2,
-  }
+  };
   const dataset_1 = {
     label: 'Ch1',
-    data: filteredChartData.map((item) => (item.Ch1 ? item.Ch1[settings.temperature ? 0 : 1] : null)),
+    data: filteredChartData.map((item) =>
+      item.Ch1 ? item.Ch1[temperature ? 0 : 1] : null,
+    ),
     borderColor: 'rgb(255, 99, 132)',
     backgroundColor: 'rgba(255, 99, 132, 0.5)',
     borderWidth: 1,
     pointRadius: 2,
   };
-  
+
   const dataset_2 = {
     label: 'Ch2',
-    data: filteredChartData.map((item) => (item.Ch2 ? item.Ch2[settings.temperature ? 0 : 1] : null)),
+    data: filteredChartData.map((item) =>
+      item.Ch2 ? item.Ch2[temperature ? 0 : 1] : null,
+    ),
     borderColor: 'rgb(154, 0, 255)',
     backgroundColor: 'rgba(154, 0, 255, 0.5)',
     borderWidth: 1,
     pointRadius: 2,
   };
-  
+
   const dataset_3 = {
     label: 'Ch3',
-    data: filteredChartData.map((item) => (item.Ch3 ? item.Ch3[settings.temperature ? 0 : 1] : null)),
+    data: filteredChartData.map((item) =>
+      item.Ch3 ? item.Ch3[temperature ? 0 : 1] : null,
+    ),
     borderColor: 'rgb(255, 255, 0)',
     backgroundColor: 'rgba(255, 255, 0, 0.5)',
     borderWidth: 1,
     pointRadius: 2,
-  };  
+  };
 
-  const datasets = [ dataset_0 ];
-  
+  const datasets = [dataset_0];
+
   if (fileData.some((item) => 'Ch1' in item)) {
     datasets.push(dataset_1);
   }
@@ -111,44 +135,25 @@ const Chart = ({ fileData, fileName }) => {
   if (fileData.some((item) => 'Ch3' in item)) {
     datasets.push(dataset_3);
   }
-  
+
   const data = {
     labels: filteredLabels,
     datasets,
   };
 
-  const handlePointClick = (event, elements) => {
-    if (elements.length > 0) {
-      const clickedPoint = fileData[elements[0].index];
-      const clickedPointId = parseInt(clickedPoint.ID) + parseInt(range.min);
+  const isAnnotationInRange = (id) => rangeMin <= id && id <= rangeMax;
 
-      const hasAnnotation = annotationPointIds.includes(clickedPointId);
-
-      setAnnotationPointIds((prevIds) => {
-        if (hasAnnotation) {
-          return prevIds.filter((id) => id !== clickedPointId); // Remove the annotation if it already exists
-        } else {
-          return [...prevIds, clickedPointId]; // Add the annotation if it doesn't exist
-        }
-      });
-      setLastClickedPoint(clickedPoint)
-    }
-  };
-
-  const isAnnotationInRange = (id) => range.min <= id && id <= range.max;
-
-  const annotations = annotationPointIds
-  .map((id, index) => ({
+  const annotations = annotationPoints.map((id, index) => ({
     type: 'line',
     scaleID: 'x',
-    value: id - 1 - range.min,
+    value: id - 1 - rangeMin,
     borderColor: 'rgb(255, 99, 132)',
     borderWidth: 2,
     label: {
       display: true,
-      content: `P${index + 1}`
+      content: `P${index + 1}`,
     },
-    diaplay: isAnnotationInRange
+    diaplay: isAnnotationInRange,
   }));
 
   const options = {
@@ -162,11 +167,14 @@ const Chart = ({ fileData, fileName }) => {
       },
       annotation: {
         annotations: {
-          ...annotations.reduce((obj, _, index) => ({
-            ...obj,
-            [`line${index + 1}`]: annotations[index],
-          }), {}),
-        }
+          ...annotations.reduce(
+            (obj, _, index) => ({
+              ...obj,
+              [`line${index + 1}`]: annotations[index],
+            }),
+            {},
+          ),
+        },
       },
     },
     scales: {
@@ -174,7 +182,7 @@ const Chart = ({ fileData, fileName }) => {
         position: 'bottom',
         title: {
           display: true,
-          text: settings.time ? 'Godzina pomiaru w dniu badania' : 'Sekunda badania',
+          text: time ? 'Godzina pomiaru w dniu badania' : 'Sekunda badania',
         },
       },
       y: {
@@ -182,7 +190,7 @@ const Chart = ({ fileData, fileName }) => {
         position: 'left',
         title: {
           display: true,
-          text: `Temperatura w ${settings.temperature ? '°C' : 'K'}`, 
+          text: `Temperatura w ${temperature ? '°C' : 'K'}`,
         },
       },
     },
@@ -192,7 +200,7 @@ const Chart = ({ fileData, fileName }) => {
 
   const handleExport = () => {
     const base64Image = chartRef.current.toBase64Image('image/png', 1);
-    
+
     if (base64Image) {
       const anchor = document.createElement('a');
       anchor.href = base64Image;
@@ -204,52 +212,61 @@ const Chart = ({ fileData, fileName }) => {
   };
 
   const modalContent = (
-    <Modal onClose={onCloseNode}>
-      <h2 className='modal__content__header' >Lista adnotacji</h2>
-      <img className="modal__content__close" onClick={onCloseNode} src={Close} alt="Close"/>
-      <ul className='modal__content__list'>
-        {annotationPointIds.map((id) => {
-          const annotationPoint = fileData.find((point) => parseInt(point.ID) + parseInt(range.min) === id);
+    <Modal onClose={closeModal}>
+      <h2 className="modal__content__header">Lista adnotacji</h2>
+      <img
+        className="modal__content__close"
+        onClick={closeModal}
+        src={Close}
+        alt="Close"
+      />
+      <ul className="modal__content__list">
+        {annotationPoints.map((id) => {
+          const annotationPoint = fileData.find(
+            (point) => parseInt(point.ID) + parseInt(rangeMin) === id,
+          );
 
           return (
-            <li className='modal__content__list-item' key={id}>
-                {annotationPoint && (
-                  <>
-                    <p>Godzina: {annotationPoint.time}, Sekunda: {annotationPoint.ID}, Temperatura(Ch0): {annotationPoint.Ch0[0]} °C / {annotationPoint.Ch0[1]} K </p>
-                    <img className="modal__content__delete" onClick={() => deleteAnnotation(id)} src={Trash} alt="Delete annotation icon"/>
-                  </>
-                )}
+            <li className="modal__content__list-item" key={id}>
+              {annotationPoint && (
+                <>
+                  <p>
+                    Godzina: {annotationPoint.time}, Sekunda:{' '}
+                    {annotationPoint.ID}, Temperatura(Ch0):{' '}
+                    {annotationPoint.Ch0[0]} °C / {annotationPoint.Ch0[1]} K{' '}
+                  </p>
+                  <img
+                    className="modal__content__delete"
+                    onClick={() => deleteAnnotation(id)}
+                    src={Trash}
+                    alt="Delete annotation icon"
+                  />
+                </>
+              )}
             </li>
           );
         })}
-        {annotationPointIds.length === 0 && (
-          <p>
-            Brak adnotacji do wyświetlenia
-          </p>
-        )}
+        {annotationPoints.length === 0 && <p>Brak adnotacji do wyświetlenia</p>}
       </ul>
     </Modal>
-  )
+  );
 
   const settingsContent = (
-    <div className='chart__settings'>
+    <div className="chart__settings">
       <div className="temperature">
-        <span className='temperature__text'>Ustawienie temperatury</span>
-        <Switch 
-          isOn={settings.temperature}
-          handleToggle={() => setSettings(prevSettings => ({ ...prevSettings, temperature: !prevSettings.temperature }))}
+        <span className="temperature__text">Ustawienie temperatury</span>
+        <Switch
+          isOn={temperature}
+          handleToggle={() => dispatch(chartActions.setTemperature())}
           id="temperature"
           textOneWhite="°C"
           textOneBlack="°C"
           textTwoWhite="K"
           textTwoBlack="K"
         />
-      </div>
-      <div className="time">
-        <span className='time__text'>Ustawienie czasu</span>
         <Switch
-          isOn={settings.time}
-          handleToggle={() => setSettings(prevSettings => ({ ...prevSettings, time: !prevSettings.time }))}
+          isOn={time}
+          handleToggle={() => dispatch(chartActions.setTime())}
           id="time"
           textOneWhite="czas"
           textOneBlack="czas"
@@ -257,69 +274,78 @@ const Chart = ({ fileData, fileName }) => {
           textTwoBlack="s"
         />
       </div>
-      <Button 
-        primary={true}
-        onClick={handleExport}
-        className='export'
-      >
+      <Button primary={true} onClick={handleExport} className="export">
         <span>Export</span>
         <img src={ExportIcon} alt="Download icon" />
       </Button>
-      <Button onClick={onClickNode}>
-        Lista
-      </Button>      
+      <Button onClick={openModal}>Lista</Button>
     </div>
-  )
+  );
 
   const chartInfo = (
     <>
-      <h1 className='chart__title'>Wybrany plik: {fileName}</h1>
-      {fileData[1] && <p className='chart__date'>Data badania: {fileData[1].date.toLocaleDateString()}</p>}
-      <p className='chart__date'>
+      <h1 className="chart__title">Wybrany plik: {file ? file.name : 'Brak'}</h1>
+      {fileData[1] && (
+        <p className="chart__date">
+          Data badania: {fileData[1].date.toLocaleDateString()}
+        </p>
+      )}
+      <p className="chart__date">
         Ostatni kliknięty punkt:
-        {lastClickedPoint ? (
-          ` Godzina ${lastClickedPoint.time}, Sekunda badania: ${lastClickedPoint.ID}, Temperatura(Ch0): ${lastClickedPoint.Ch0[0]} °C / ${lastClickedPoint.Ch0[1]} K`
-        ) : (
-          ' Brak klikniętego punktu'
-        )}
+        {lastClickedPoint
+          ? ` Godzina ${lastClickedPoint.time}, Sekunda badania: ${lastClickedPoint.ID}, Temperatura(Ch0): ${lastClickedPoint.Ch0[0]} °C / ${lastClickedPoint.Ch0[1]} K`
+          : ' Brak klikniętego punktu'}
       </p>
     </>
-  )
+  );
 
   const chartControls = (
     <>
       <div className="chart__controls">
         <input
-          className='chart__input'
+          className="chart__input"
           type="number"
           placeholder="min"
-          value={range.min}
+          value={rangeMin}
           onChange={handleMinInputChange}
           min="0"
         />
         <input
-          className='chart__input'
+          className="chart__input"
           type="number"
           placeholder="max"
-          value={range.max}
+          value={rangeMax}
           onChange={handleMaxInputChange}
           max={fileData.length}
         />
       </div>
-      <RangeSlider min={0} max={fileData.length} value={[range.min, range.max]} onInput={handleRangeChange} />
+      <RangeSlider
+        min={0}
+        max={fileData.length}
+        value={[rangeMin, rangeMax]}
+        onInput={handleRangeChange}
+      />
     </>
-  )
+  );
 
   return (
-    <div className='chart'>
-      {modalIsShown && modalContent}
-      {settingsContent}
-      {chartInfo}
-      <div className='chart__container'>
-        <Line data={data} options={options} width={1000} height={500} ref={chartRef}/>
+    <>
+      <div className="chart">
+        {modalIsShown && modalContent}
+        {settingsContent}
+        {chartInfo}
+        <div className="chart__container">
+          <Line
+            data={data}
+            options={options}
+            width={1000}
+            height={500}
+            ref={chartRef}
+          />
+        </div>
+        {chartControls}
       </div>
-      {chartControls}
-    </div>
+    </>
   );
 };
 

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { inputActions } from '../../store/input'
 
 // Styles
 import './Input.scss'
@@ -11,61 +13,72 @@ import cloudIcon from '../../img/upload.svg'
 import errorIcon from '../../img/error.svg'
 import okIcon from '../../img/ok.svg'
 
-const Input = ({ setSelectedFile }) => {
-  const [chosenFile, setChosenFile] = useState(null);
-  const [dragActive, setDragActive] = useState(false);
-  const [error, setError] = useState(null);
+const Input = () => {
+  const dispatch = useDispatch();
+
+  const file = useSelector(state => state.input.file)
+  const dragActive = useSelector(state => state.input.dragActive)
+  const error = useSelector(state => state.input.error)
+  const header = useSelector(state => state.input.header)
+
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (dragActive) {
-      setError(null);
-      setChosenFile(null);
-    }
-  }, [chosenFile, dragActive, error]);
-
-  function handleFile(files) {
-    if (files && files[0]) {
-      const file = files[0];
-      setChosenFile(file);
+  function handleFile(passedFile) {
+    if (passedFile) {
+      dispatch(inputActions.setFile(passedFile))
     }
   }
   
-  // handle drag events
-  //this basically changes styling of form when user drags file into form
+  //  handle drag events
+  //  this basically changes styling of form when user drags file into form
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
+      dispatch(inputActions.setDragActive(true))
     } else if (e.type === "dragleave") {
-      setDragActive(false);
+      dispatch(inputActions.setDragActive(false))
     }
   };
   
-  // triggers when file is dropped but i have no idea what happens when i drop multiple files cause it doesnt throw an error and it also doesnt set any file
+  //  triggers when file is dropped
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length === 1) {
-      const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile.name.endsWith('.xlsx')) {
-        handleFile([droppedFile]);
-      } else {
-        setError('Plik musi być rozszerzenia .xlsx')
-      }
-    } else if (e.dataTransfer.files.length > 1) {
-      setError('Możesz przesłać maksymalnie jeden plik')
+    dispatch(inputActions.setDragActive(false))
+
+    if (!e.dataTransfer.files || e.dataTransfer.files.length !==1 ) {
+      dispatch(inputActions.setError('Możesz przesłać maksymalnie jeden plik'))  
+      return
     }
+    console.log('File passed first if statement')
+    const droppedFile = e.dataTransfer.files[0];
+
+    if (!droppedFile.name.endsWith('.xlsx')) {
+      dispatch(inputActions.setError('Plik musi być rozszerzenia .xlsx'))
+      return
+    }
+
+    handleFile(droppedFile)
   };
   
-  // triggers when file is selected with click
+  //  triggers when file is selected with click
   const handleChange = (e) => {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files);
+    const file = e.target.files[0]
+
+    console.log('Selected file:')
+    console.log(file)
+
+    if (!file.name.endsWith('.xlsx')) {
+      dispatch(inputActions.setError('Plik musi być rozszerzenia .xlsx'))
+      dispatch(inputActions.setHeader('error'))
+      dispatch(inputActions.setFile(null))
+      return
     }
+
+    handleFile(file);
   };
 
   const onButtonClick = () => {
@@ -75,14 +88,14 @@ const Input = ({ setSelectedFile }) => {
   };
 
   const setInputHeader = () => {
-    if (chosenFile) {
+    if (header === 'file') {
       return (
         <div className='input__header'>
           <img className='input__img' src={okIcon} alt="Ok icon" />
-          <h1 className='input__title input__title--ok'>Wybrany plik: {chosenFile.name}</h1>
+          <h1 className='input__title input__title--ok'>Wybrany plik: {file.name}</h1>
         </div>
       )
-    } else if (error) {
+    } else if (header === 'error') {
       return (
         <div className='input__header'>
           <img className='input__img' src={errorIcon} alt="Error icon" />
@@ -96,15 +109,25 @@ const Input = ({ setSelectedFile }) => {
     }
   }
 
-  const handleDrawChart = () => {
-    if (chosenFile && chosenFile.name.endsWith('.xlsx')) {
-      setSelectedFile(chosenFile); // Set the selected file in the parent component
+  useEffect(() => {
+    if (file) {
+      dispatch(inputActions.setHeader('file'));
+    } else if (error) {
+      dispatch(inputActions.setHeader('error'));
     } else {
-      setChosenFile(null)
-      setError('Plik musi być rozszerzenia .xlsx')
+      dispatch(inputActions.setHeader('default'));
     }
-  };
-  
+    setInputHeader()
+  }, [file, error]);
+
+  useEffect(() => {
+    if (dragActive) {
+      dispatch(inputActions.setHeader('default'))
+      dispatch(inputActions.setError(null))
+      dispatch(inputActions.setFile(null))
+    }
+  }, [dragActive]);
+
   return (
     <>
     {setInputHeader()}
@@ -119,9 +142,6 @@ const Input = ({ setSelectedFile }) => {
       </label>
       { dragActive && <div className='input__drag' onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div> }
     </form>
-    <div className="input__controls">
-      <Button primary={false} disabled={chosenFile ? false : true} onClick={handleDrawChart}>Rysuj wykres</Button>
-    </div>
     </>
   );
 }
