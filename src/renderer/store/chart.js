@@ -4,7 +4,7 @@ const initialState = {
   // RANGE OF POINTS THAT ARE DISPLAYED ON CHART
   range: {
     min: 0,
-    max: 1000,
+    max: 250,
   },
   // TEMPERATURE THAT IS DISPLAYED ON CHART // true = Celsius, false = Kelvin
   temperature: true,
@@ -20,14 +20,46 @@ const chartSlice = createSlice({
   name: 'chart',
   initialState: initialState,
   reducers: {
-    setMinRange (state, action) {},
-    setMaxRange (state, action) {},
-    setRange (state, action) {},
-    addAnnotation (state, action) {},
-    deleteAnnotation (state, action) {},
-    setLastClickedPoint (state, action) {},
-    openModal (state) {},
-    closeModal (state) {},
+    setMinRange (state, action) {
+        state.range.min = action.payload
+    },
+
+    setMaxRange (state, action) {
+        state.range.max = action.payload
+    },
+
+    setRange (state, action) {
+        state.range.min = action.payload.min
+        state.range.max = action.payload.max
+    },
+
+    setTemperature(state) {
+        state.temperature = !state.temperature
+    },
+
+    setTime(state) {
+        state.time = !state.time
+    },
+
+    addAnnotation(state, action) {
+      state.annotationPoints.push(action.payload);
+    },
+      
+    deleteAnnotation(state, action) {
+      state.annotationPoints = state.annotationPoints.filter(id => id !== action.payload);
+    },
+
+    setLastClickedPoint (state, action) {
+        state.lastClickedPoint = action.payload
+    },
+
+    openModal (state) {
+        state.modalIsShown = true
+    },
+
+    closeModal (state) {
+        state.modalIsShown = false
+    },
   },
 });
 
