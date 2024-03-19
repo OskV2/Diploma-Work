@@ -3,8 +3,9 @@ import './App.css';
 
 import Root from "./pages/Root";
 import Home from "./pages/Home";
-import Disposable from "./pages/Disposable";
+import InputPage from "./pages/Input";
 import About from "./pages/About";
+import Generate from "./pages/Generate"
 
 const router = createHashRouter([
   {
@@ -12,7 +13,8 @@ const router = createHashRouter([
     element: <Root />,
     children: [
       { index: true, element: <Home /> },
-      { path: "disposable", element: <Disposable /> },
+      { path: "input", element: <InputPage /> },
+      { path: "input/display", element: <Generate /> },
       { path: "about", element: <About /> }
     ],
   },
