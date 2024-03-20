@@ -15,7 +15,7 @@ import './Chart.scss';
 import 'react-range-slider-input/dist/style.css';
 
 import ExportIcon from '../../img/file-export.svg';
-import Close from '../../img/close.svg';
+
 import Trash from '../../img/trash.svg';
 
 ChartJS.register(...registerables, annotationPlugin);
@@ -212,14 +212,12 @@ const Chart = () => {
   };
 
   const modalContent = (
-    <Modal onClose={closeModal}>
+    <Modal 
+      isOpen={modalIsShown}
+      onClose={closeModal}
+    >
       <h2 className="modal__content__header">Lista adnotacji</h2>
-      <img
-        className="modal__content__close"
-        onClick={closeModal}
-        src={Close}
-        alt="Close"
-      />
+
       <ul className="modal__content__list">
         {annotationPoints.map((id) => {
           const annotationPoint = fileData.find(
