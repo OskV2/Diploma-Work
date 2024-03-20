@@ -13,7 +13,6 @@ const initialState = {
   // ARRAY OF ID'S OF POINTS THAT HAVE ANNOTATION ADDED
   annotationPoints: [],
   lastClickedPoint: null,
-  modalIsShown: false,
 };
 
 const chartSlice = createSlice({
@@ -51,14 +50,6 @@ const chartSlice = createSlice({
 
     setLastClickedPoint (state, action) {
         state.lastClickedPoint = action.payload
-    },
-
-    openModal (state) {
-        state.modalIsShown = true
-    },
-
-    closeModal (state) {
-        state.modalIsShown = false
     },
   },
 });
