@@ -6,17 +6,17 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { chartActions } from '../../store/chart';
+import { chartListActions } from '../../store/chart-list';
 
 import Switch from '../Switch/Switch';
 import Button from '../Button/Button';
-import Modal from '../Modal/Modal';
+import ChartList from '../ChartList/ChartList';
 
 import './Chart.scss';
 import 'react-range-slider-input/dist/style.css';
 
 import ExportIcon from '../../img/file-export.svg';
 
-import Trash from '../../img/trash.svg';
 
 ChartJS.register(...registerables, annotationPlugin);
 
@@ -31,7 +31,7 @@ const Chart = () => {
   const time = useSelector((state) => state.chart.time);
   const annotationPoints = useSelector((state) => state.chart.annotationPoints);
   const lastClickedPoint = useSelector((state) => state.chart.lastClickedPoint);
-  const modalIsShown = useSelector((state) => state.chart.modalIsShown);
+  const modalList = useSelector((state) => state.chartList.modalIsShown);
   const chartRef = useRef(null);
 
   /* ----------------------------
@@ -40,9 +40,7 @@ const Chart = () => {
   *
   ----------------------------- */
 
-  const openModal = () => dispatch(chartActions.openModal());
-
-  const closeModal = () => dispatch(chartActions.closeModal());
+  const openModal = () => dispatch(chartListActions.openModal())
 
   const handleMinInputChange = (e) => dispatch(chartActions.setMinRange(e.target.value));
 
@@ -50,7 +48,8 @@ const Chart = () => {
 
   const handleRangeChange = (newRange) => dispatch(chartActions.setRange({ min: newRange[0], max: newRange[1] }));
 
-  const handlePointClick = (event, elements) => {
+  //  this _ means that i dont need to pass first argument to this function, but i need a second argument to make it work properly
+  const handlePointClick = (_, elements) => {
     if (elements && elements.length > 0) {
       const clickedPoint = fileData[elements[0].index];
       dispatch(chartActions.setLastClickedPoint(clickedPoint));
@@ -211,44 +210,6 @@ const Chart = () => {
     }
   };
 
-  const modalContent = (
-    <Modal 
-      isOpen={modalIsShown}
-      onClose={closeModal}
-    >
-      <h2 className="modal__content__header">Lista adnotacji</h2>
-
-      <ul className="modal__content__list">
-        {annotationPoints.map((id) => {
-          const annotationPoint = fileData.find(
-            (point) => parseInt(point.ID) + parseInt(rangeMin) === id,
-          );
-
-          return (
-            <li className="modal__content__list-item" key={id}>
-              {annotationPoint && (
-                <>
-                  <p>
-                    Godzina: {annotationPoint.time}, Sekunda:{' '}
-                    {annotationPoint.ID}, Temperatura(Ch0):{' '}
-                    {annotationPoint.Ch0[0]} °C / {annotationPoint.Ch0[1]} K{' '}
-                  </p>
-                  <img
-                    className="modal__content__delete"
-                    onClick={() => deleteAnnotation(id)}
-                    src={Trash}
-                    alt="Delete annotation icon"
-                  />
-                </>
-              )}
-            </li>
-          );
-        })}
-        {annotationPoints.length === 0 && <p>Brak adnotacji do wyświetlenia</p>}
-      </ul>
-    </Modal>
-  );
-
   const settingsContent = (
     <div className="chart__settings">
       <div className="temperature">
@@ -329,7 +290,7 @@ const Chart = () => {
   return (
     <>
       <div className="chart">
-        {modalIsShown && modalContent}
+        {modalList && <ChartList />}
         {settingsContent}
         {chartInfo}
         <div className="chart__container">

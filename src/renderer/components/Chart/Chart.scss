@@ -85,37 +85,3 @@ $green: rgb(9, 211, 172);
         }
     }
 }
-
-.modal__content {
-    display: flex;
-    flex-direction: column;
-
-    &__header {
-        font-size: 20px;
-        margin: 0;
-    }
-
-    &__list {
-        padding: 0px;
-
-        max-height: 300px;
-        overflow-y: scroll;
-    }
-
-    &__list-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        border-bottom: 1px solid #252525;
-        &:last-child {
-            border: none;
-        }
-    }
-
-    &__delete {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;   
-    }
-}
