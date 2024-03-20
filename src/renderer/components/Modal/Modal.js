@@ -21,7 +21,7 @@ const Modal = (props) => {
               src={Close}
               alt="Close"
             />
-            {props.title && <Dialog.Title>{props.title}</Dialog.Title>}
+            {props.title && <Dialog.Title className='modal__title'>{props.title}</Dialog.Title>}
             {props.description && <Dialog.Description>{props.description}</Dialog.Description>}
             {props.children}
           </Dialog.Panel>
