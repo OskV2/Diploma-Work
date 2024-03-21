@@ -1,34 +1,25 @@
+import { Switch } from '@headlessui/react'
+
 import './Switch.scss';
 
-const Switch = (props) => {
+const SwitchUI = (props) => {
   return (
-    <>
-      <input
-        checked={props.isOn}
-        onChange={props.handleToggle}
-        className="switch__checkbox"
-        id={`switch_${props.id}`}
-        type="checkbox"
+    <Switch
+      checked={props.enabled}
+      onChange={props.onChange}
+      className={`switch ${
+        props.enabled ? 'switch--enabled' : 'switch--disabled'
+      }`}
+    >
+      <span className="sr-only">{props.sr}</span>
+      <span
+        aria-hidden="true"
+        className={`switch__span ${
+          props.enabled ? 'switch__span--enabled' : 'switch__span--disabled'
+        }`}
       />
-      <label className="switch__label" htmlFor={`switch_${props.id}`}>
-        <p
-          className={
-            'switch__label__text ' +
-            (props.isOn
-              ? 'switch__label__text--left'
-              : 'switch__label__text--right')
-          }
-        >
-          {props.isOn ? props.textTwoBlack : props.textOneBlack}
-        </p>
-        <span className="switch__button">
-          <p className="switch__button__text">
-          {props.isOn ? props.textOneWhite : props.textTwoWhite}
-          </p>
-        </span>
-      </label>
-    </>
+    </Switch>
   );
 };
 
-export default Switch;
+export default SwitchUI;
