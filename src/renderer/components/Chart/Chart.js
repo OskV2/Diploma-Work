@@ -1,22 +1,28 @@
 import { useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
-import RangeSlider from 'react-range-slider-input';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import { useDispatch, useSelector } from 'react-redux';
 
+//  Actions from redux
 import { chartActions } from '../../store/chart';
 import { chartListActions } from '../../store/chart-list';
+import { chartSettingsActions } from '../../store/chart-settings';
 
-import Switch from '../Switch/Switch';
+// Components
 import Button from '../Button/Button';
 import ChartList from '../ChartList/ChartList';
+import ChartSettings from '../ChartSettings/ChartSettings';
+import RangeSlider from 'react-range-slider-input';
 
+// Styles
 import './Chart.scss';
 import 'react-range-slider-input/dist/style.css';
 
+// Assets
+import GearIcon from '../../img/gear.svg';
 import ExportIcon from '../../img/file-export.svg';
-
+import ListIcon from '../../img/list.svg';
 
 ChartJS.register(...registerables, annotationPlugin);
 
@@ -31,7 +37,8 @@ const Chart = () => {
   const time = useSelector((state) => state.chart.time);
   const annotationPoints = useSelector((state) => state.chart.annotationPoints);
   const lastClickedPoint = useSelector((state) => state.chart.lastClickedPoint);
-  const modalList = useSelector((state) => state.chartList.modalIsShown);
+  const list = useSelector((state) => state.chartList.modalIsShown);
+  const settings = useSelector((state) => state.chartSettings.modalIsShown);
   const chartRef = useRef(null);
 
   /* ----------------------------
@@ -40,7 +47,9 @@ const Chart = () => {
   *
   ----------------------------- */
 
-  const openModal = () => dispatch(chartListActions.openModal())
+  const openList = () => dispatch(chartListActions.openModal());
+
+  const openSettings = () => dispatch(chartSettingsActions.openModal());
 
   const handleMinInputChange = (e) => dispatch(chartActions.setMinRange(e.target.value));
 
@@ -53,10 +62,10 @@ const Chart = () => {
     if (elements && elements.length > 0) {
       const clickedPoint = fileData[elements[0].index];
       dispatch(chartActions.setLastClickedPoint(clickedPoint));
-    
+
       const clickedPointId = parseInt(clickedPoint.ID) + parseInt(rangeMin);
       const hasAnnotation = annotationPoints.includes(clickedPointId);
-  
+
       if (!hasAnnotation) {
         dispatch(chartActions.addAnnotation(clickedPointId));
       } else {
@@ -210,40 +219,11 @@ const Chart = () => {
     }
   };
 
-  const settingsContent = (
-    <div className="chart__settings">
-      <div className="temperature">
-        <span className="temperature__text">Ustawienie temperatury</span>
-        <Switch
-          isOn={temperature}
-          handleToggle={() => dispatch(chartActions.setTemperature())}
-          id="temperature"
-          textOneWhite="°C"
-          textOneBlack="°C"
-          textTwoWhite="K"
-          textTwoBlack="K"
-        />
-        <Switch
-          isOn={time}
-          handleToggle={() => dispatch(chartActions.setTime())}
-          id="time"
-          textOneWhite="czas"
-          textOneBlack="czas"
-          textTwoWhite="s"
-          textTwoBlack="s"
-        />
-      </div>
-      <Button primary={true} onClick={handleExport} className="export">
-        <span>Export</span>
-        <img src={ExportIcon} alt="Download icon" />
-      </Button>
-      <Button onClick={openModal}>Lista</Button>
-    </div>
-  );
-
   const chartInfo = (
     <>
-      <h1 className="chart__title">Wybrany plik: {file ? file.name : 'Brak'}</h1>
+      <h1 className="chart__title">
+        Wybrany plik: {file ? file.name : 'Brak'}
+      </h1>
       {fileData[1] && (
         <p className="chart__date">
           Data badania: {fileData[1].date.toLocaleDateString()}
@@ -257,6 +237,25 @@ const Chart = () => {
       </p>
     </>
   );
+
+  const buttons = (
+    <>
+      <div className='chart__buttons'>
+        <Button className='button' onClick={openSettings}>
+          <span>Ustawienia</span>
+          <img src={GearIcon} alt="Settings icon" />
+        </Button>
+        <Button className='button' primary={true} onClick={handleExport}>
+          <span>Export</span>
+          <img src={ExportIcon} alt="Download icon" />
+        </Button>
+        <Button className='button' onClick={openList}>
+          <span>Lista</span>
+          <img src={ListIcon} alt="List icon" />
+        </Button>
+      </div>
+    </>
+  )
 
   const chartControls = (
     <>
@@ -290,9 +289,10 @@ const Chart = () => {
   return (
     <>
       <div className="chart">
-        {modalList && <ChartList />}
-        {settingsContent}
+        {list && <ChartList />}
+        {settings && <ChartSettings />}
         {chartInfo}
+        {buttons}
         <div className="chart__container">
           <Line
             data={data}

@@ -1,0 +1,13 @@
+.chart {
+    &__setting {
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &:first-of-type {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #252525;
+        }
+    }
+}
