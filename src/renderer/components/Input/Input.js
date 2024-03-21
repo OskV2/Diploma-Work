@@ -70,9 +70,6 @@ const Input = () => {
     e.preventDefault();
     const file = e.target.files[0]
 
-    console.log('Selected file:')
-    console.log(file)
-
     if (!file.name.endsWith('.xlsx')) {
       dispatch(inputActions.setError('Plik musi być rozszerzenia .xlsx'))
       dispatch(inputActions.setHeader('error'))

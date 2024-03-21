@@ -21,11 +21,11 @@ const ChartSettings = () => {
   return (
     <Modal isOpen={modalIsShown} onClose={closeModal} title={'Ustawienia'}>
         <div className='chart__setting'>
-            <p>Ustawienie wyświetlanej temperatury [ °C / K ]</p>
+            <p>Ustawienie wyświetlanej temperatury [ K / °C ]</p>
             <SwitchUI enabled={temperature} onChange={setTemperature} />
         </div>
         <div className='chart__setting'>
-            <p>Ustawienie czasu [ godzina pomiaru / sekunda badania ]</p>
+            <p>Ustawienie czasu [ sekunda badania / godzina pomiaru ]</p>
             <SwitchUI enabled={time} onChange={setTime} />
         </div>
     </Modal>

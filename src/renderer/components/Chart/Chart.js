@@ -282,6 +282,7 @@ const Chart = () => {
         max={fileData.length}
         value={[rangeMin, rangeMax]}
         onInput={handleRangeChange}
+        step='10'
       />
     </>
   );
