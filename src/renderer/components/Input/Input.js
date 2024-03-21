@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
+//  Actions for redux
 import { inputActions } from '../../store/input'
 
 // Styles
