@@ -4,7 +4,7 @@ const initialState = {
   // RANGE OF POINTS THAT ARE DISPLAYED ON CHART
   range: {
     min: 0,
-    max: 250,
+    max: 200,
   },
   // TEMPERATURE THAT IS DISPLAYED ON CHART // true = Celsius, false = Kelvin
   temperature: true,
