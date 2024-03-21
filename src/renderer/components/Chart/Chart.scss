@@ -42,7 +42,7 @@ $green: rgb(9, 211, 172);
         }
     }
 
-    &__settings {
+    &__buttons {
         position: absolute;
         top: 20px;
         right: 20px;
@@ -52,17 +52,7 @@ $green: rgb(9, 211, 172);
         align-items: flex-end;
         gap: 10px;
 
-        .temperature, .time {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            
-            &__text {
-                color: white;
-            }
-        }
-
-        .export {
+        .button {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -83,48 +73,5 @@ $green: rgb(9, 211, 172);
         &__range {
             background: $green !important;
         }
-    }
-}
-
-.modal__content {
-    display: flex;
-    flex-direction: column;
-
-    &__header {
-        font-size: 20px;
-        margin: 0;
-    }
-
-    &__list {
-        padding: 0px;
-
-        max-height: 300px;
-        overflow-y: scroll;
-    }
-
-    &__list-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        border-bottom: 1px solid #252525;
-        &:last-child {
-            border: none;
-        }
-    }
-
-    &__delete {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;   
-    }
-
-    &__close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
     }
 }

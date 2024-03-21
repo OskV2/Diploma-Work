@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
+//  Actions for redux
 import { inputActions } from '../../store/input'
 
 // Styles
@@ -67,9 +69,6 @@ const Input = () => {
   const handleChange = (e) => {
     e.preventDefault();
     const file = e.target.files[0]
-
-    console.log('Selected file:')
-    console.log(file)
 
     if (!file.name.endsWith('.xlsx')) {
       dispatch(inputActions.setError('Plik musi być rozszerzenia .xlsx'))
