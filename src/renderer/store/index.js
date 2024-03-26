@@ -17,7 +17,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: ['input/setFileData', 'input/setFile'],
         ignoredActionPaths: ['payload.date'],
-        ignoredPaths: ['input.file', 'input.fileData'],
+        ignoredPaths: ['input.file', 'input.fileData', 'chart.lastClickedPoint'],
       },
     }),
 });
